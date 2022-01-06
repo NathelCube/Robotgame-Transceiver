@@ -20,7 +20,7 @@ radio.onReceivedString(function (receivedString) {
     serial.writeLine(empfangenFunk)
     Polling_Zähler += 1
     if (Polling_Zähler < Anzahl_Roboter) {
-        radio.sendString("send2")
+        radio.sendString("send" + (Polling_Zähler + 1))
     } else {
         PollingFertig = true
     }
