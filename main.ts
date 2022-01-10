@@ -24,13 +24,12 @@ function DatenWeiterleiten (SeriellDaten: string) {
 }
 input.onButtonPressed(Button.A, function () {
     basic.showLeds(`
-        . . # . .
+        . . . . .
+        . . . . #
         . # . # .
-        . # # # .
-        # . # . #
-        # . . . #
+        . . # . .
+        . . . . .
         `)
-    radio.sendNumber(50)
 })
 serial.onDataReceived(serial.delimiters(Delimiters.NewLine), function () {
     DatenWeiterleiten(serial.readLine())
@@ -51,16 +50,7 @@ radio.onReceivedString(function (receivedString) {
         FunkDatenArt = "Sonstiges"
     }
 })
-input.onButtonPressed(Button.B, function () {
-    basic.showLeds(`
-        # # # # #
-        # . . . #
-        # . # # .
-        # . . . #
-        # # # # #
-        `)
-    radio.sendNumber(10)
-})
+let ÜbertragungSchlecht = false
 let Polling_Zähler = 0
 let empfangenFunk = ""
 let PollingWarteZähler = 0
@@ -99,6 +89,14 @@ loops.everyInterval(100, function () {
 loops.everyInterval(100, function () {
     PollingWarteZähler += 1
     if (PollingWarteZähler >= 2) {
+        ÜbertragungSchlecht = true
+        basic.showLeds(`
+            # . # . .
+            . # . . .
+            # . # . .
+            . . . . .
+            . . . . .
+            `)
         PollingWarteZähler = 0
         Polling_Zähler += 1
         if (Polling_Zähler < Anzahl_Roboter) {
