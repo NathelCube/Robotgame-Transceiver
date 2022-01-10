@@ -21,6 +21,8 @@ function DatenWeiterleiten (SeriellDaten: string) {
     EmpangeneDaten = SeriellDaten
     serial.writeLine(EmpangeneDaten)
     radio.sendString(EmpangeneDaten)
+    EmpfangenesArray = EmpangeneDaten.split(",")
+    Anzahl_Roboter = parseFloat(EmpfangenesArray[0])
 }
 input.onButtonPressed(Button.A, function () {
     basic.showLeds(`
@@ -55,6 +57,7 @@ let Polling_Zähler = 0
 let empfangenFunk = ""
 let PollingWarteZähler = 0
 let FunkDatenArt = ""
+let EmpfangenesArray: string[] = []
 let EmpangeneDaten = ""
 let PollingFertig = false
 let Anzahl_Roboter = 0
