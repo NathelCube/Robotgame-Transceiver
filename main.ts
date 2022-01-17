@@ -1,22 +1,4 @@
-/**
- * FunkDatenArt: Hier wird reingeschrieben ob die empfangenen Funkdaten Sensordaten sind oder sonstiges.
- * 
- * Polling_Zähler:
- * 
- * Hier wird gezählt, von welchem Roboter die aktuell empfangenen Sensordaten sind.
- * 
- * PollingWarteZähler:
- * 
- * Hiermit wird die Verbindung zu den einzelnen Robotern überwacht. Pro 100ms, wo das Programm auf eine Antwort eines Roboters wartet wird 1 raufgezählt. Wenn der Zähler bei 2 ist, hat der Roboter 100-200ms lange nichts gesendet und wird übersprungen.
- */
-/**
- * Wenn ein Roboter nach 100-200ms keine Antwort gibt, wird er übersprungen.
- * 
- * Was passiert wenn diese "every" loop den "wenn Text empfangen" loop unterbricht?
- */
-/**
- * Für nachher, wenn ich die Daten für mehrere Roboter aufteilen muss
- */
+// Für nachher, wenn ich die Daten für mehrere Roboter aufteilen muss
 function DatenWeiterleiten (SeriellDaten: string) {
     EmpangeneDaten = SeriellDaten
     serial.writeLine(EmpangeneDaten)
@@ -39,7 +21,7 @@ serial.onDataReceived(serial.delimiters(Delimiters.NewLine), function () {
 radio.onReceivedString(function (receivedString) {
     if (receivedString.substr(0, 1) == "R") {
         FunkDatenArt = "Sensordaten"
-        PollingWarteZähler = 0
+        PollingZeitZuletzt = control.millis()
         empfangenFunk = receivedString
         serial.writeLine(empfangenFunk)
         Polling_Zähler += 1
@@ -52,10 +34,26 @@ radio.onReceivedString(function (receivedString) {
         FunkDatenArt = "Sonstiges"
     }
 })
+/**
+ * FunkDatenArt: Hier wird reingeschrieben ob die empfangenen Funkdaten Sensordaten sind oder sonstiges.
+ * 
+ * Polling_Zähler:
+ * 
+ * Hier wird gezählt, von welchem Roboter die aktuell empfangenen Sensordaten sind.
+ * 
+ * PollingWarteZähler:
+ * 
+ * Hiermit wird die Verbindung zu den einzelnen Robotern überwacht. Pro 100ms, wo das Programm auf eine Antwort eines Roboters wartet wird 1 raufgezählt. Wenn der Zähler bei 2 ist, hat der Roboter 100-200ms lange nichts gesendet und wird übersprungen.
+ */
+/**
+ * Wenn ein Roboter nach 100-200ms keine Antwort gibt, wird er übersprungen.
+ * 
+ * Was passiert wenn diese "every" loop den "wenn Text empfangen" loop unterbricht?
+ */
 let ÜbertragungSchlecht = false
 let Polling_Zähler = 0
 let empfangenFunk = ""
-let PollingWarteZähler = 0
+let PollingZeitZuletzt = 0
 let FunkDatenArt = ""
 let EmpfangenesArray: string[] = []
 let EmpangeneDaten = ""
@@ -80,18 +78,12 @@ basic.showLeds(`
 Anzahl_Roboter = 2
 PollingFertig = true
 basic.forever(function () {
-	
-})
-loops.everyInterval(100, function () {
     if (PollingFertig) {
         radio.sendString("send1")
         PollingFertig = false
         Polling_Zähler = 0
     }
-})
-loops.everyInterval(100, function () {
-    PollingWarteZähler += 1
-    if (PollingWarteZähler >= 2) {
+    if (control.millis() - PollingZeitZuletzt >= 50) {
         ÜbertragungSchlecht = true
         basic.showLeds(`
             # . # . .
@@ -100,7 +92,6 @@ loops.everyInterval(100, function () {
             . . . . .
             . . . . .
             `)
-        PollingWarteZähler = 0
         Polling_Zähler += 1
         if (Polling_Zähler < Anzahl_Roboter) {
             radio.sendString("send" + (Polling_Zähler + 1))
