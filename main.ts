@@ -70,11 +70,11 @@ SerialPin.P14,
 BaudRate.BaudRate115200
 )
 basic.showLeds(`
-    # # # . .
+    . . . # .
     # # # # #
-    # # # . .
-    # # # . #
-    # # # . .
+    . # . # .
+    # # # # #
+    . # . . .
     `)
 Anzahl_Roboter = 2
 PollingFertig = true
