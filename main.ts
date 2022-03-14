@@ -19,7 +19,6 @@ function DatenWeiterleiten (SeriellDaten: string) {
     EmpangeneDaten = SeriellDaten
     radio.sendString(EmpangeneDaten)
     EmpfangenesArray = EmpangeneDaten.split(",")
-    Anzahl_Roboter = parseFloat(EmpfangenesArray[0])
 }
 input.onButtonPressed(Button.A, function () {
     basic.showLeds(`
@@ -76,7 +75,7 @@ basic.showLeds(`
     # # # # #
     . # . . .
     `)
-Anzahl_Roboter = 2
+Anzahl_Roboter = 4
 PollingFertig = true
 basic.forever(function () {
     if (PollingFertig) {
